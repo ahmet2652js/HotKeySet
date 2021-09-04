@@ -1,0 +1,37 @@
+; gui
+Global $hGUI                    = GUICreate("BASS.au3 UDF Audio Player", 350, 200)
+
+; volumn
+Global $iBarW = 330
+Global $cAudioVolLabel          = GUICtrlCreateLabel("", 10, 10, $iBarW, 20)
+;~ Global $cAudioVolCtrl        = GUICtrlCreateProgress(10, 10, $iBarW, 20)
+Global $cAudioVolCtrl           = GUICtrlCreateSlider(10, 10, $iBarW, 20)
+; volum slider numeration
+Local $iSliderWidth                   = $iBarW
+Local $iSliderX                       = 17
+Local $iSliderMin                     = 0
+Local $iSliderMax                     = 100   ; <<< length ajd
+Local $iTicInterval                   = 25    ; <<< frequency ajd
+Local $iAlignIndicatorToInterval      = 26    ; <<< match up numberated to marker on slider ajd
+Local $iLabelPos                      = Floor(($iSliderWidth - $iAlignIndicatorToInterval) * $iTicInterval / ($iSliderMax - $iSliderMin))
+Local $iLabelCount                    = $iSliderMax / $iTicInterval
+Local $iLabelWidth                    = 20
+_GUICtrlSlider_SetRange($cAudioVolCtrl, 0, $iSliderMax)
+_GUICtrlSlider_SetTicFreq($cAudioVolCtrl, $iTicInterval)
+For $i = 0 To $iLabelCount + 1
+    Local $bOverspill       = False
+    ; Calculate tic value
+    Local $iLabelValue      = $i * $iTicInterval
+    ; Check if over max
+    If $iLabelValue >= $iSliderMax Then
+        $bOverspill         = True
+        $iLabelValue        = $iSliderMax
+    EndIf
+    GUICtrlCreateLabel($iLabelValue, $iSliderX + ($i * $iLabelPos), 35, $iLabelWidth, 15)
+    If $bOverspill Then ExitLoop
+Next
+
+; tooltip/track
+Local $iLabelW = 1000 ; to keep long str as 1 liner
+;~ Local $iLabelW = 100 ; to keep long str as 1 liner
+Global $cAudioTitle            = GUICtrlCreateLabel("", 10, 65, $iLabelW, 20)
